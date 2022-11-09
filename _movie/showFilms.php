@@ -1,22 +1,25 @@
 <?php
     function get_iycdg($connect, $req)
     {
-        for ($ind = ($req - 1)*5; $ind < ($req)*5; $ind++) {
-            $iycd_ids[$ind]['iycd'] = $connect->query(
+        for ($ind = ($req - 1)*5; $ind < ($req)*5; $ind++)
+        {
+            $iycd_ids[$ind] = $connect->query(
                 "SELECT id, year_id, country_id, distributer_id
              FROM Movies
              WHERE id = '$ind' + 1"
             )->fetch_assoc();
         }
-        for ($ind = ($req - 1)*5; $ind < ($req)*5; $ind++) {
-            $movie_id = $iycd_ids[$ind]['iycd']['id'];
+        for ($ind = ($req - 1)*5; $ind < ($req)*5; $ind++)
+        {
+            $movie_id = $iycd_ids[$ind]['id'];
             $result = $connect->query(
                 "SELECT genre_id FROM genres_movies
                  WHERE movie_id = '$movie_id'"
             );
             $j = 0;
             /* получение массива объектов */
-            while ($row = $result->fetch_row()) {
+            while ($row = $result->fetch_row())
+            {
                 $iycd_ids[$ind]['gs'][$j] = $row[0];
                 $j++;
             }
@@ -30,10 +33,10 @@
         $iycdg_ids = get_iycdg($connect, $req);
         for ($ind = ($req - 1)*5; $ind < ($req)*5; $ind++)
         {
-            $movie_id = $iycdg_ids[$ind]['iycd']['id'];
-            $year_id = $iycdg_ids[$ind]['iycd']['year_id'];
-            $ct_id = $iycdg_ids[$ind]['iycd']['country_id'];
-            $cm_id = $iycdg_ids[$ind]['iycd']['distributer_id'];
+            $movie_id = $iycdg_ids[$ind]['id'];
+            $year_id = $iycdg_ids[$ind]['year_id'];
+            $ct_id = $iycdg_ids[$ind]['country_id'];
+            $cm_id = $iycdg_ids[$ind]['distributer_id'];
             $iycdg_vals[$ind + 1] = $connect->query(
                 "SELECT (SELECT name FROM Movies WHERE id = '$movie_id') as name, 
                     (SELECT year FROM years WHERE id = '$year_id') as year, 
@@ -54,25 +57,5 @@
                 $iycdg_vals[$ind+1]['genre'][$j] = $iycdg_vals[$ind+1]['genre'][$j][$jstr];
             }
         }
-//        for ($ind = ($req - 1)*5; $ind < ($req)*5; $ind++) {
-//            $iycd_ids[$ind]['iycd'] = $connect->query(
-//                "SELECT id, year_id, country_id, distributer_id
-//             FROM Movies
-//             WHERE id = '$ind' + 1"
-//            )->fetch_assoc();
-//        }
-//        for ($ind = ($req - 1)*5; $ind < ($req)*5; $ind++) {
-//            $movie_id = $iycd_ids[$ind]['iycd']['id'];
-//            $result = $connect->query(
-//                "SELECT genre_id FROM genres_movies
-//                 WHERE movie_id = '$movie_id'"
-//            );
-//            $j = 0;
-//            /* получение массива объектов */
-//            while ($row = $result->fetch_row()) {
-//                $iycd_ids[$ind]['gs'][$j] = $row[0];
-//                $j++;
-//            }
-//        }
         return json_encode($iycdg_vals);
     }

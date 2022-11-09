@@ -3,7 +3,6 @@
     {
         $nickName = $requestData->body->nickName;
         $password = hash("sha1", $requestData->body->password);
-        echo $nickName;
         $user = $connect->query(
             "SELECT id from Users
              WHERE nickName='$nickName' AND password='$password'"
@@ -16,7 +15,6 @@
         else
         {
             $token = bin2hex(random_bytes(16));
-            echo "works";
             $user_id = $user['id'];
             $tokenInsertResult = $connect->query(
                 "INSERT INTO tokens(user_id, token) 
@@ -35,6 +33,7 @@
                      WHERE id = '$user_id'"
                 )->fetch_assoc();
                 // echo json_encode(["token" => $token]);
+                echo $token . "\n";
                 return json_encode($user);
             }
         }

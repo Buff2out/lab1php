@@ -50,11 +50,11 @@
             }
             else if ("" == $req)
             {
-                echo showFilms();
+                echo showFilms($connect);
             }
             else if (0 < $req && $req < 6)
             {
-                echo showFilms($req);
+                echo showFilms($connect, $req);
             }
             else
             {

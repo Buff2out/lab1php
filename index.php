@@ -11,6 +11,9 @@
     require_once "./_registration/registration.php";
     require_once "./_login/login.php";
     require_once "./_login/auth.php";
+    require_once "./_login/logout.php";
+    require_once "statuscodes.php";
+    require_once "./_profile/profile.php"; // editProfile(), getProfile()
 
     $connect = getConnect_lab1php();
     $urlList = getUrlList();
@@ -28,11 +31,22 @@
         case "GET":
             if ("profile" == $req)
             {
-                echo "profile";
+                $userFromToken = json_decode(tryAuthByToken($connect));
+                echo getProfile($connect, $userFromToken->id) . " \n";
+                //http_response_code(200);
             }
             else if ("movie" == $req)
             {
                 echo "movie";
+            }
+            else if ("login" == $req)
+            {
+                $userFromToken = tryAuthByToken($connect);
+                echo $userFromToken;
+            }
+            else if ("logout" == $req)
+            {
+                logout($connect);
             }
             else if ("" == $req)
             {
@@ -50,16 +64,15 @@
         case "POST":
             switch ($req)
             {
+                case "profile":
+                    $userFromToken = json_decode(tryAuthByToken($connect));
+                    echo editProfile($connect, $userFromToken->id, $requestData);
+                    break;
                 case "login":
-                    echo login($connect, $requestData);
+                    echo login($connect, $requestData) . " \n";
+                    // echo http_response_code(415) . " login works\n";
                     break;
                 case "registration":
-//                    $login = $requestData->body->login;
-//                    $user = $connect->query(
-//                        "SELECT id from Users
-//                    WHERE username='$login'"
-//                    )->fetch_assoc();
-//                    echo json_encode($user);
                     register($connect, $requestData);
                     break;
                 default:

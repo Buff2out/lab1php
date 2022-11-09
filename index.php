@@ -16,6 +16,7 @@
     require_once "./_login/logout.php";
     require_once "statuscodes.php";
     require_once "./_profile/profile.php"; // editProfile(), getProfile()
+    require_once "./_favorite/favorite.php";
 
     $connect = getConnect_lab1php();
     $urlList = getUrlList();
@@ -68,6 +69,20 @@
             {
                 echo showFilms($connect, $req);
             }
+            else if ("favorite" == $req)
+            {
+                $userFromToken = json_decode(tryAuthByToken($connect));
+                $user_id = $userFromToken->id;
+                if (is_null($user_id))
+                {
+                    http_response_code(403);
+                    echo "403 Forbidden. User is not authorized";
+                }
+                else
+                {
+                    echo getFavorite($connect, $user_id);
+                }
+            }
             else
             {
                 http_response_code(400);
@@ -93,6 +108,30 @@
                     else if ("delrev" ==  $SetReviewToMovie && $movie_id <= $lenOfFilms && !is_null($user_id))
                     {
                         deleteReview($connect, $user_id, $movie_id);
+                    }
+                    else if ("addtofav" == $SetReviewToMovie && $movie_id <= $lenOfFilms)
+                    {
+                        if (is_null($user_id))
+                        {
+                            http_response_code(403);
+                            echo "403 Forbidden. User is not authorized";
+                        }
+                        else
+                        {
+                            addToFavorite($connect, $user_id, $movie_id);
+                        }
+                    }
+                    else if ("rmfav" == $SetReviewToMovie && $movie_id <= $lenOfFilms)
+                    {
+                        if (is_null($user_id))
+                        {
+                            http_response_code(403);
+                            echo "403 Forbidden. User is not authorized";
+                        }
+                        else
+                        {
+                            deleteFromFavorite($connect, $user_id, $movie_id);
+                        }
                     }
                     else
                     {

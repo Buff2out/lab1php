@@ -11,13 +11,13 @@
             "DELETE FROM tokens
              WHERE token = (
              SELECT token FROM tokens WHERE token='$token')"
-        )->fetch_assoc();
+        );
         if (!$tokenDeleteResult)
         {
             echo http_response_code(500) . " Fail to delete token\n";
         }
         else
         {
-            echo http_response_code(500) . "Success to delete token\n";
+            echo http_response_code(200) . "Success to delete token\n";
         }
     }
